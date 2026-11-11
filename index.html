@@ -8,14 +8,14 @@
 <style>
 :root{--bg:#F8F7F4;--ink:#171717;--mute:#858585;--line:#E8E7E3;color-scheme:light}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;background:var(--line);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);overflow:hidden}
+html,body{width:100%;height:100%;min-height:0;background:var(--line);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;transition:transform .15s,opacity .2s}
 button:active{transform:scale(.97);opacity:.8}
-.app{position:relative;max-width:430px;height:100%;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.app{position:relative;max-width:430px;height:100vh;height:100dvh;min-height:0;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
 .top{height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);flex:none;padding-top:env(safe-area-inset-top,0px)}
 .logo{font-size:18px;font-weight:500;letter-spacing:-.04em}
 .ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
-main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:76px;scrollbar-width:none}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:20px;scrollbar-width:none}
 main::-webkit-scrollbar{display:none}
 .fade{animation:fade .45s cubic-bezier(.2,.7,.2,1)}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -42,7 +42,7 @@ main::-webkit-scrollbar{display:none}
 .tabs button.on{color:var(--ink)}
 .tabs button::after{content:"";position:absolute;left:0;right:0;bottom:-15px;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .3s}
 .tabs button.on::after{transform:scaleX(1)}
-nav{position:absolute;left:0;right:0;bottom:0;display:flex;background:var(--bg);border-top:1px solid var(--line);padding:11px 0 calc(11px + env(safe-area-inset-bottom,0px));z-index:5}
+nav{position:relative;left:auto;right:auto;bottom:auto;flex:none;display:flex;background:var(--bg);border-top:1px solid var(--line);padding:11px 0 calc(11px + env(safe-area-inset-bottom,0px));z-index:5}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;letter-spacing:.06em;color:var(--mute);position:relative;transition:color .25s}
 nav button.on{color:var(--ink)}
 .bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--ink);color:var(--bg);font-size:9px;display:grid;place-items:center}
