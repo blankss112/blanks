@@ -89,6 +89,7 @@ nav button.on{color:var(--ink)}
 .back{display:flex;align-items:center;gap:4px;font-size:13px;padding:18px 0 4px;cursor:pointer;color:var(--mute)}
 @media(min-width:600px){body{padding:18px 0}.app{height:calc(100% - 36px);min-height:600px;border:1px solid #e4e3df}}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -98,6 +99,14 @@ nav button.on{color:var(--ink)}
 </div>
 <script>
 'use strict';
+
+const SUPABASE_URL = 'https://xoothvvwivglruepgbfu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_SWdFCnd42rfPARIod8Q_QA_WDuEmEwU';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const ICONS={
 home:'<path d="M4 11l8-6.5 8 6.5v8.5H4z"/>',
@@ -127,7 +136,7 @@ return `<svg viewBox="0 0 100 116" preserveAspectRatio="xMidYMid meet" aria-hidd
 const SIZES_TOP=['XS','S','M','L','XL'];
 const SIZES_PANTS=['28','30','32','34'];
 
-const PRODUCTS=[
+const DEMO_PRODUCTS=[
 {id:1,name:'Футболка Heavy Cotton',group:'top',type:'tee',price:890,sizes:SIZES_TOP,unavailable:['XS'],popular:true,description:'Плотный хлопок 240 г/м², свободный крой, укреплённый ворот.'},
 {id:2,name:'Худи Essential',group:'top',type:'hood',price:2290,sizes:SIZES_TOP,unavailable:['XS','S'],popular:true,description:'Футер с начёсом, двойной капюшон, спокойный силуэт.'},
 {id:3,name:'Свитшот Crew',group:'top',type:'sweat',price:1890,sizes:SIZES_TOP,unavailable:['XL'],popular:true,description:'Классический свитшот без лишних деталей. Манжеты в рубчик.'},
@@ -137,12 +146,57 @@ const PRODUCTS=[
 {id:7,name:'Брюки Wide',group:'bottom',type:'pants',price:1690,sizes:SIZES_PANTS,unavailable:[],popular:false,description:'Широкие брюки из футера, пояс со шнуром.'},
 {id:8,name:'Шорты Cotton',group:'bottom',type:'shorts',price:1090,sizes:SIZES_TOP,unavailable:['XS'],popular:false,description:'Лёгкие шорты из плотного хлопка до колена.'}
 ];
+  let PRODUCTS = [...DEMO_PRODUCTS];
+
+async function loadProductsFromSupabase(){
+  try {
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if(error) throw error;
+
+    if(!data || data.length === 0){
+      console.log('Supabase: база товаров пока пустая');
+      return;
+    }
+
+    PRODUCTS = data.map((item, index) => {
+      const category = String(item.category || '').toLowerCase();
+
+      return {
+        id: item.id,
+        name: item.name,
+        group: ['bottom', 'низ', 'pants'].includes(category) ? 'bottom' : 'top',
+        type: 'tee',
+        price: Number(item.price),
+        sizes: Array.isArray(item.sizes) && item.sizes.length ? item.sizes : SIZES_TOP,
+        unavailable: [],
+        popular: index < 4,
+        description: item.description || '',
+        images: item.images || []
+      };
+    });
+
+    if(state.view === 'home' || state.view === 'catalog'){
+      render();
+    }
+
+    console.log('Supabase: товары загружены', PRODUCTS.length);
+
+  } catch(error) {
+    console.error('Ошибка загрузки товаров:', error);
+    PRODUCTS = [...DEMO_PRODUCTS];
+  }
+}
 
 const state={view:'home',category:'all',cart:[],productId:null,selectedSize:null,orderComplete:false,delivery:0};
 
 const $=selector=>document.querySelector(selector);
 const money=value=>value.toLocaleString('uk-UA')+' ₴';
-const getProduct=id=>PRODUCTS.find(product=>product.id===Number(id));
+const getProduct=id=>PRODUCTS.find(product=>String(product.id)===String(id));
 const cartCount=()=>state.cart.reduce((sum,item)=>sum+item.quantity,0);
 const cartTotal=()=>state.cart.reduce((sum,item)=>{
 const product=getProduct(item.id);
@@ -175,7 +229,7 @@ main.scrollTop=keepScroll?oldScroll:0;
 }
 
 function productCard(product){
-return `<div class="card" onclick="openProduct(${product.id})">
+return `<div class="card" onclick='openProduct(${JSON.stringify(product.id)})'>
 <div class="img">${productSvg(product.type)}</div>
 <h3>${product.name}</h3>
 <div class="pr">${money(product.price)}</div>
@@ -280,7 +334,7 @@ render();
 }
 
 function openProduct(id){
-state.productId=Number(id);
+state.productId=id;
 state.selectedSize=null;
 renderProductOverlay();
 }
@@ -349,6 +403,7 @@ if(current)current.textContent='Добавить в корзину';
 }
 
 render();
+loadProductsFromSupabase();
 </script>
 </body>
 </html>
