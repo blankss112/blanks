@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>blanks — minimal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F8F7F4;--ink:#171717;--mute:#858585;--line:#E8E7E3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--line);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;transition:transform .15s,opacity .2s}
+button:active{transform:scale(.97);opacity:.8}
+.app{position:relative;max-width:430px;height:100%;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.top{height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);flex:none}
+.logo{font-size:18px;font-weight:500;letter-spacing:-.04em}
+.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:76px;scrollbar-width:none}
+main::-webkit-scrollbar{display:none}
+.fade{animation:fade .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pad{padding:0 20px}
+.img{position:relative;background:var(--line);overflow:hidden}
+.img svg{position:absolute;inset:12% 10% 10%;width:80%;height:78%}
+.hero{margin:20px 20px 0;aspect-ratio:4/5}
+.hero svg{inset:10%;width:80%;height:80%}
+.lead{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:flex-end}
+.lead small{display:block;font-size:11px;color:var(--mute);margin-bottom:5px;letter-spacing:.04em}
+.lead h1{font-weight:400;font-size:18px;letter-spacing:-.01em}
+.btn{display:block;width:100%;padding:16px;background:var(--ink);color:var(--bg);font-size:13px;letter-spacing:.04em;font-weight:400;border-radius:2px;text-align:center}
+.link{font-size:13px;border-bottom:1px solid var(--ink);padding-bottom:2px}
+.sec{padding:64px 20px 0}
+.sh{font-size:11px;color:var(--mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 12px}
+.card{cursor:pointer}
+.card .img{aspect-ratio:3/4}
+.card h3{font-size:13px;font-weight:400;margin:10px 0 3px}
+.pr{font-size:13px;color:var(--mute)}
+.foot{margin-top:72px;padding:22px 20px 28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:11px;color:var(--mute)}
+.tabs{display:flex;gap:26px;padding:18px 20px 14px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.tabs button{font-size:13px;color:var(--mute);position:relative;padding-bottom:6px;transition:color .25s}
+.tabs button.on{color:var(--ink)}
+.tabs button::after{content:"";position:absolute;left:0;right:0;bottom:-15px;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .3s}
+.tabs button.on::after{transform:scaleX(1)}
+nav{position:absolute;left:0;right:0;bottom:0;display:flex;background:var(--bg);border-top:1px solid var(--line);padding:11px 0 calc(11px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;letter-spacing:.06em;color:var(--mute);position:relative;transition:color .25s}
+nav button.on{color:var(--ink)}
+.bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:14px;height:14px;border-radius:7px;background:var(--ink);color:var(--bg);font-size:9px;display:grid;place-items:center}
+.bump{animation:bump .4s}
+@keyframes bump{40%{transform:scale(1.4)}}
+.ov{position:absolute;inset:0;background:var(--bg);z-index:10;display:flex;flex-direction:column;animation:up .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes up{from{transform:translateY(5%);opacity:0}to{transform:none;opacity:1}}
+.ov .scroll{flex:1;overflow-y:auto;scrollbar-width:none}
+.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;position:relative}
+.gal::-webkit-scrollbar{display:none}
+.gal .img{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:4/5}
+.bk{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:16px;z-index:3;width:36px;height:36px;display:grid;place-items:center}
+.cn{position:absolute;right:18px;top:calc(24px + env(safe-area-inset-top,0px));z-index:3;font-size:11px;color:var(--mute);letter-spacing:.06em}
+.info{padding:22px 20px 28px}
+.info h1{font-weight:400;font-size:20px;letter-spacing:-.01em}
+.info .pr{font-size:15px;color:var(--ink);margin-top:5px}
+.info p{font-size:13px;line-height:1.65;color:var(--mute);margin:18px 0 28px}
+.lb{font-size:11px;color:var(--mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.sizes{display:flex;gap:8px}
+.chip{flex:1;max-width:56px;padding:11px 0;border:1px solid var(--line);font-size:12px;border-radius:2px;text-align:center;transition:all .2s}
+.chip.on{border-color:var(--ink)}
+.chip.x{color:var(--line);text-decoration:line-through;pointer-events:none}
+.cta{padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg)}
+.item{display:flex;gap:16px;padding:20px 0;border-top:1px solid var(--line);animation:fade .4s}
+.item .img{width:84px;aspect-ratio:3/4;flex:none}
+.item .m{flex:1;display:flex;flex-direction:column}
+.item h3{font-size:13px;font-weight:400}
+.s{font-size:12px;color:var(--mute);margin-top:3px}
+.qty{display:flex;align-items:center;gap:2px;font-size:13px}
+.qty button{width:28px;height:28px;font-size:16px;color:var(--mute)}
+.rm{font-size:11px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+.sum{border-top:1px solid var(--line);padding:20px 0;display:flex;justify-content:space-between;font-size:15px}
+.f{display:block;margin-bottom:24px}
+.f span{display:block;font-size:11px;color:var(--mute);margin-bottom:4px}
+.f input{width:100%;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 0;font:inherit;font-size:15px;outline:0;border-radius:0;transition:border-color .2s}
+.f input:focus{border-color:var(--ink)}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
+.opt:last-of-type{border-bottom:1px solid var(--line)}
+.rad{width:14px;height:14px;border:1px solid var(--ink);border-radius:50%;position:relative}
+.opt.on .rad::after{content:"";position:absolute;inset:3px;background:var(--ink);border-radius:50%;animation:fade .2s}
+.empty{text-align:center;padding:110px 30px;color:var(--mute);font-size:13px;line-height:1.6}
+.empty h2{font-weight:400;font-size:18px;color:var(--ink);margin-bottom:6px}
+.empty .btn{display:inline-block;width:auto;padding:14px 32px;margin-top:26px}
+.back{display:flex;align-items:center;gap:4px;font-size:13px;padding:18px 0 4px;cursor:pointer;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div class="logo">blanks</div></div>
+  <main id="main"></main>
+  <nav id="nav"></nav>
+</div>
+<script>
+const I={home:'<path d="M4 11l8-6.500 8 6.500v8.500H4z"/>',shop:'<rect x="4" y="4" width="6.500" height="6.500"/><rect x="13.500" y="4" width="6.500" height="6.500"/><rect x="4" y="13.500" width="6.500" height="6.500"/><rect x="13.500" y="13.500" width="6.500" height="6.500"/>',bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.500a3 3 0 016 0V8"/>',back:'<path d="M15 5l-7 7 7 7"/>'};
+const ic=n=><svg class="ic" viewBox="0 0 24 24">${I[n]}</svg>;
+const SH={tee:'M30 18L42 12Q50 20 58 12L70 18L88 36L78 46L70 40V104H30V40L22 46L12 36Z',hood:'M30 20L40 14Q50 24 60 14L70 20L90 84L80 88L70 52V104H30V52L20 88L10 84Z M38 14Q50 0 62 14Q50 28 38 14Z',sweat:'M30 18L42 12Q50 18 58 12L70 18L90 84L80 88L70 50V104H30V50L20 88L10 84Z',pants:'M32 10H68L73 108H54L50 44L46 108H27Z',shorts:'M30 26H70L76 74H55L50 50L45 74H24Z'};
+const svg=(t,sh=0)=><svg viewBox="0 0 100 116" preserveAspectRatio="xMidYMid meet"><path d="${SH[t]}" fill="${sh?'#F1F0EC':'#F8F7F4'}" stroke="#D9D8D3" stroke-width=".5" fill-rule="evenodd"/></svg>;
+const S5=['XS','S','M','L','XL'],S4=['28','30','32','34'];
+const P=[
+ {id:1,n:'Футболка Heavy Cotton',g:'top',t:'tee',p:890,s:S5,o:['XS'],pop:1,d:'Плотный хлопок 240 г/м², свободный крой, укреплённый ворот.'},
+ {id:2,n:'Худи Essential',g:'top',t:'hood',p:2290,s:S5,o:['XS','S'],pop:1,d:'Футер с начёсом, двойной капюшон, спокойный силуэт.'},
+ {id:3,n:'Свитшот Crew',g:'top',t:'sweat',p:1890,s:S5,o:['XL'],pop:1,d:'Классический свитшот без лишних деталей. Манжеты в рубчик.'},
+ {id:4,n:'Брюки Straight',g:'bottom',t:'pants',p:1790,s:S4,o:['28'],pop:1,d:'Прямые брюки из хлопкового твила, средняя посадка.'},
+ {id:5,n:'Футболка Boxy',g:'top',t:'tee',p:950,s:S5,o:[],d:'Укороченный boxy-крой, мягкая стирка.'},
+ {id:6,n:'Лонгслив Rib',g:'top',t:'sweat',p:1190,s:S5,o:[],d:'Тонкий хлопок в рубчик, длинный рукав.'},
+ {id:7,n:'Брюки Wide',g:'bottom',t:'pants',p:1690,s:S5,o:[],d:'Широкие брюки из футера, пояс со шнуром.'},
+ {id:8,n:'Шорты Cotton',g:'bottom',t:'shorts',p:1090,s:S5,o:['XS'],d:'Лёгкие шорты из плотного хлопка до колена.'}
+];
+const $=s=>document.querySelector(s),pr=n=>n.toLocaleString('uk-UA').replace(/\u00a0/g,' ')+' ₴',find=id=>P.find(p=>p.id==id);
+const A={view:'home',cat:'all',bag:[{id:1,sz:'M',q:1}],pid:null,psz:null,done:false,dl:0};
+const cnt=()=>A.bag.reduce((a,b)=>a+b.q,0),total=()=>A.bag.reduce((a,b)=>a+find(b.id).p*b.q,0);
+const go=(v,o={})=>{Object.assign(A,o,{view:v,pid:null});$('.ov')?.remove();draw()};
+const card=p=><div class="card" onclick="openP(${p.id})"><div class="img">${svg(p.t)}</div><h3>${p.n}</h3><div class="pr">${pr(p.p)}</div></div>;
+function draw(keep){
+ const v=A.view;
+ $('#nav').innerHTML=[['home','Главная','home'],['catalog','Каталог','shop'],['bag','Корзина','bag']].map(([k,l,i])=><button class="${v==k||(v=='checkout'&&k=='bag')?'on':''}" onclick="go('${k}')">${ic(i)}${l}${k=='bag'&&cnt()?<span class="bdg" id="bd">${cnt()}</span>:''}</button>).join('');
+ const m=$('#main'),st=m.scrollTop;m.className=keep?'':'fade';
+ m.innerHTML=({home,catalog,bag,checkout})[v]();m.scrollTop=keep?st:0;
+}
+function home(){
+ return `<div class="img hero">${svg('hood',1)}</div>
+ <div class="lead"><div><small>Коллекция</small><h1>Осень 2026</h1></div><button class="link" onclick="go('catalog')">Смотреть коллекцию</button></div>
+ <div class="sec"><div class="sh">Популярное</div><div class="grid">${P.filter(p=>p.pop).map(card).join('')}</div></div>
+ <div class="foot"><span>blanks © 2026</span><span>Киев</span></div>`;
+}
+function catalog(){
+ const l=P.filter(p=>A.cat=='all'||p.g==A.cat);
+ return <div class="tabs">${[['all','Все'],['top','Верх'],['bottom','Низ']].map(([k,n])=><button class="${A.cat==k?'on':''}" onclick="A.cat='${k}';draw(1);$('#main').firstElementChild.nextElementSibling.classList.add('fade')">${n}</button>).join('')}</div><div class="pad"><div class="grid">${l.map(card).join('')}</div></div>;
+}
+function bag(){
+ if(!A.bag.length)return <div class="empty"><h2>Корзина пуста</h2>Здесь появятся выбранные вещи<br><button class="btn" onclick="go('catalog')">В каталог</button></div>;
+ return `<div class="pad" style="padding-top:22px"><div class="sh">Корзина</div>
+ ${A.bag.map((b,i)=>{const p=find(b.id);return <div class="item"><div class="img">${svg(p.t)}</div><div class="m"><h3>${p.n}</h3><div class="s">Размер ${b.sz}</div><div class="pr" style="color:var(--ink);margin-top:3px">${pr(p.p*b.q)}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto"><div class="qty"><button onclick="q(${i},-1)">−</button><span>${b.q}</span><button onclick="q(${i},1)">+</button></div><button class="rm" onclick="A.bag.splice(${i},1);draw(1)">Удалить</button></div></div></div>}).join('')}
+ <div class="sum"><span>Итого</span><span>${pr(total())}</span></div><button class="btn" onclick="go('checkout')">Оформить заказ</button></div>`;
+}
+const q=(i,d)=>{A.bag[i].q=Math.max(1,Math.min(9,A.bag[i].q+d));draw(1)};
+function checkout(){
+ if(A.done)return <div class="empty"><h2>Заказ оформлен</h2>Спасибо. Мы свяжемся с вами в Telegram<br>для подтверждения.<br><button class="btn" onclick="A.done=false;go('home')">На главную</button></div>;
+ const D=['Нова Пошта — отделение','Курьер'];
+ return `<div class="pad"><div class="back" onclick="go('bag')">${ic('back')} Корзина</div><div class="sh" style="margin:18px 0 22px">Оформление</div>
+ <label class="f"><span>Имя</span><input autocomplete="name"></label>
+ <label class="f"><span>Телефон</span><input type="tel" placeholder="+380"></label>
+ <label class="f"><span>Город</span><input></label>
+ <div class="lb" style="margin-top:8px">Доставка</div>${D.map((d,i)=><div class="opt ${A.dl==i?'on':''}" onclick="A.dl=${i};draw(1)"><span>${d}</span><div class="rad"></div></div>).join('')}
+ <div class="sum" style="margin-top:8px"><span>К оплате</span><span>${pr(total())}</span></div>
+ <button class="btn" onclick="A.bag=[];A.done=true;draw()">Подтвердить заказ</button></div>`;
+}
+function openP(id){A.pid=id;A.psz=null;ovl()}
+function ovl(){
+ const p=find(A.pid),sc=$('.ov .scroll'),st=sc?sc.scrollTop:0;$('.ov')?.remove();
+ $('#app,.app').insertAdjacentHTML('beforeend',`<div class="ov"${sc?' style="animation:none"':''}><div class="scroll"><button class="bk" onclick="$('.ov').remove();A.pid=null">${ic('back')}</button><span class="cn" id="cn">1 / 3</span>
+ <div class="gal" onscroll="$('#cn').textContent=(Math.round(this.scrollLeft/this.clientWidth)+1)+' / 3'">${[0,1,2].map(k=><div class="img">${svg(p.t,k==1)}</div>).join('')}</div>
+ <div class="info"><h1>${p.n}</h1><div class="pr">${pr(p.p)}</div><p>${p.d}</p><div class="lb">Размер</div><div class="sizes">${p.s.map(s=><button class="chip ${A.psz==s?'on':''} ${p.o.includes(s)?'x':''}" onclick="A.psz='${s}';ovl()">${s}</button>).join('')}</div></div></div>
+ <div class="cta"><button class="btn" id="add" onclick="addB()">Добавить в корзину</button></div></div>`);
+ if(sc)$('.ov .scroll').scrollTop=st;
+}
+function addB(){
+ const p=find(A.pid),b=$('#add');
+ if(!A.psz){b.textContent='Выберите размер';setTimeout(()=>b.textContent='Добавить в корзину',1200);return}
+ const e=A.bag.find(x=>x.id==p.id&&x.sz==A.psz);e?e.q++:A.bag.push({id:p.id,sz:A.psz,q:1});
+ draw(1);document.getElementById('bd')?.classList.add('bump');
+ b.textContent='Добавлено';setTimeout(()=>{const x=$('#add');if(x)x.textContent='Добавить в корзину'},1400);
+}
+draw();
+</script>
+</body>
+</html>
