@@ -260,12 +260,12 @@ function productCard(product){
   const image = Array.isArray(product.images) ? product.images[0] : '';
 
   const visual = image
-    ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(product.name)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
+    ? `<img src="${image}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
     : productSvg(product.type);
 
   return `<div class="card" onclick='openProduct(${JSON.stringify(product.id)})'>
     <div class="img">${visual}</div>
-    <h3>${escapeHTML(product.name)}</h3>
+    <h3>${product.name}</h3>
     <div class="pr">${money(product.price)}</div>
   </div>`;
 }
