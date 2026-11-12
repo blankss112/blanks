@@ -404,27 +404,76 @@ $('productForm').addEventListener('submit',async event=>{
   button.textContent = 'Сохраняем...';
   showMessage('message','');
 
-  const sizes = $('pSizes').value
-    .split(',')
-    .map(s=>s.trim())
-    .filter(Boolean);
-
-  const images = $('pImages').value
-    .split('\n')
-    .map(s=>s.trim())
-    .filter(Boolean);
-
-  const payload = {
-    name:$('pName').value.trim(),
-    price:Number($('pPrice').value),
-    category:$('pCategory').value,
-    description:$('pDescription').value.trim(),
-    sizes,
-    images,
-    is_active:$('pActive').checked
-  };
-
   try{
+    const sizes = $('pSizes').value
+      .split(',')
+      .map(s=>s.trim())
+      .filter(Boolean);
+
+    const images = $('pImages').value
+      .split('\n')
+      .map(s=>s.trim())
+      .filter(Boolean);
+
+    const files = Array.from($('pFiles').files || []);
+
+    if(images.length + files.length > 5){
+      throw new Error('Можно добавить максимум 5 фотографий.');
+    }
+
+    for(const file of files){
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)){
+        throw new Error('Используй JPG, PNG или WebP.');
+      }
+
+      if(file.size > 5 * 1024 * 1024){
+        throw new Error('Размер фотографии не должен превышать 5 МБ.');
+      }
+    }
+
+    if(files.length){
+      button.textContent = 'Загружаем фотографии...';
+
+      const {data:userData,error:userError} = await db.auth.getUser();
+
+      if(userError || !userData.user){
+        throw new Error('Не удалось проверить аккаунт.');
+      }
+
+      for(const file of files){
+        const safeName = file.name.replace(/[^\w.-]/g,'_');
+        const path = `${userData.user.id}/${crypto.randomUUID()}-${safeName}`;
+
+        const {error:uploadError} = await db.storage
+          .from('product-images')
+          .upload(path,file,{
+            cacheControl:'3600',
+            upsert:false,
+            contentType:file.type
+          });
+
+        if(uploadError) throw uploadError;
+
+        const {data:publicData} = db.storage
+          .from('product-images')
+          .getPublicUrl(path);
+
+        images.push(publicData.publicUrl);
+      }
+    }
+
+    const payload = {
+      name:$('pName').value.trim(),
+      price:Number($('pPrice').value),
+      category:$('pCategory').value,
+      description:$('pDescription').value.trim(),
+      sizes,
+      images,
+      is_active:$('pActive').checked
+    };
+
+    button.textContent = 'Сохраняем товар...';
+
     let result;
 
     if(editingId){
@@ -440,6 +489,8 @@ $('productForm').addEventListener('submit',async event=>{
 
     if(result.error) throw result.error;
 
+    $('pImages').value = images.join('\n');
+
     showMessage('message','Товар успешно сохранён.');
     await loadProducts();
 
@@ -452,7 +503,6 @@ $('productForm').addEventListener('submit',async event=>{
     button.textContent = 'Сохранить товар';
   }
 });
-
 $('deleteButton').addEventListener('click',async()=>{
   if(!editingId) return;
   if(!confirm('Точно удалить этот товар?')) return;
