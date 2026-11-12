@@ -192,6 +192,18 @@ h1{font-size:26px;font-weight:500;letter-spacing:-1px;margin:35px 0 8px}
           <label>Ссылки на фотографии (каждая с новой строки)</label>
           <textarea id="pImages" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"></textarea>
         </div>
+        <div class="field full-field">
+  <label>Загрузить фотографии (до 5 штук)</label>
+  <input
+    id="pFiles"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+  >
+  <p id="fileHint" style="font-size:11px;color:#858585;margin-top:8px">
+    JPG, PNG или WebP. До 5 МБ на фотографию.
+  </p>
+</div>
 
       </div>
 
