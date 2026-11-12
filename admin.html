@@ -346,6 +346,8 @@ function openEditor(product = null){
   $('pDescription').value = product?.description || '';
   $('pSizes').value = Array.isArray(product?.sizes) ? product.sizes.join(', ') : '';
   $('pImages').value = Array.isArray(product?.images) ? product.images.join('\n') : '';
+  $('pFiles').value = '';
+  $('fileHint').textContent = 'JPG, PNG или WebP. До 5 МБ на фотографию.';
   $('pActive').checked = product ? !!product.is_active : true;
 
   showMessage('message','');
