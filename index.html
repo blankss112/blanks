@@ -430,6 +430,29 @@ if(current)current.textContent='Добавить в корзину';
 },1400);
 }
 
+const tg = window.Telegram?.WebApp;
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+
+  const updateAppHeight = () => {
+    const height = tg.viewportStableHeight || tg.viewportHeight;
+
+    if (height) {
+      document.querySelector('.app').style.height = `${height}px`;
+    }
+  };
+
+  updateAppHeight();
+
+  tg.onEvent('viewportChanged', (event) => {
+    if (event.isStateStable) {
+      updateAppHeight();
+    }
+  });
+}
+
 render();
 loadProductsFromSupabase();
 </script>
