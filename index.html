@@ -76,9 +76,33 @@ nav button.on{color:var(--ink)}
 .bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--ink);color:var(--bg);font-size:9px;display:grid;place-items:center}
 .bump{animation:bump .4s}
 @keyframes bump{40%{transform:scale(1.4)}}
-.ov{position:absolute;inset:0;background:var(--bg);z-index:10;display:flex;flex-direction:column;animation:up .45s cubic-bezier(.2,.7,.2,1);padding-top:env(safe-area-inset-top,0px)}
-@keyframes up{from{transform:translateY(5%);opacity:0}to{transform:none;opacity:1}}
-.ov .scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none}
+.ov{
+  position:absolute;
+  inset:0;
+  height:100%;
+  background:var(--bg);
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  animation:up .45s cubic-bezier(.2,.7,.2,1);
+  padding-top:env(safe-area-inset-top,0px);
+}
+
+.ov .scroll{
+  flex:1 1 0;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+
+.ov .cta{
+  flex:0 0 auto;
+  position:relative;
+  z-index:2;
+}
 .gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;position:relative}
 .gal::-webkit-scrollbar{display:none}
 .gal .img{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:4/5}
