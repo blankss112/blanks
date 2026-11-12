@@ -483,12 +483,13 @@ if (tg) {
   tg.expand();
 
   const updateAppHeight = () => {
-    const height = tg.viewportStableHeight || tg.viewportHeight;
+  const height = tg.viewportHeight;
 
-    if (height) {
-      document.querySelector('.app').style.height = `${height}px`;
-    }
-  };
+  if (height) {
+    document.querySelector('.app').style.height = `${height}px`;
+    document.querySelector('.app').style.maxHeight = `${height}px`;
+  }
+};
 
   updateAppHeight();
 
