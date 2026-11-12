@@ -71,6 +71,9 @@ main::-webkit-scrollbar{display:none}
   visibility:visible !important;
   opacity:1 !important;
 }
+  #app:has(.ov) #nav{
+  display:none !important;
+}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;letter-spacing:.06em;color:var(--mute);position:relative;transition:color .25s}
 nav button.on{color:var(--ink)}
 .bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--ink);color:var(--bg);font-size:9px;display:grid;place-items:center}
