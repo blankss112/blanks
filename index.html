@@ -378,7 +378,18 @@ const product=getProduct(state.productId);
 if(!product)return;
 $('.ov')?.remove();
 
-const gallery=[0,1,2].map(index=>`<div class="img">${productSvg(product.type,index===1)}</div>`).join('');
+const images = Array.isArray(product.images) && product.images.length
+  ? product.images
+  : ['', '', ''];
+
+const gallery = images.map((image, index) => `
+  <div class="img">
+    ${image
+      ? `<img src="${image}" alt="${product.name}" loading="${index === 0 ? 'eager' : 'lazy'}" style="width:100%;height:100%;object-fit:cover;">`
+      : productSvg(product.type, index === 1)
+    }
+  </div>
+`).join('');
 const sizeButtons=product.sizes.map(size=>{
 const unavailable=product.unavailable.includes(size);
 const selected=state.selectedSize===size;
@@ -395,8 +406,13 @@ $('#app').insertAdjacentHTML('beforeend',`<div class="ov"><div class="scroll">
 }
 
 function updateGalleryCounter(gallery){
-const counter=$('#galleryCounter');
-if(counter)counter.textContent=`${Math.round(gallery.scrollLeft/gallery.clientWidth)+1} / 3`;
+  const counter = $('#galleryCounter');
+  if(!counter) return;
+
+  const total = gallery.children.length;
+  const current = Math.round(gallery.scrollLeft / gallery.clientWidth) + 1;
+
+  counter.textContent = `${current} / ${total}`;
 }
 
 function selectSize(size){
