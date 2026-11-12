@@ -1,1 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>blanks — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<style>
+:root{
+  --bg:#F8F7F4;
+  --ink:#171717;
+  --muted:#858585;
+  --line:#E8E7E3;
+  --white:#fff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,system-ui,sans-serif;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1050px;margin:auto;padding:32px 24px 60px}
+header{
+  display:flex;justify-content:space-between;
+  align-items:center;padding-bottom:24px;
+  border-bottom:1px solid var(--line);
+}
+.logo{font-size:25px;font-weight:600;letter-spacing:-1.5px}
+.header-right{font-size:12px;color:var(--muted)}
+h1{font-size:26px;font-weight:500;letter-spacing:-1px;margin:35px 0 8px}
+.sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.panel{
+  background:var(--white);border:1px solid var(--line);
+  padding:25px;margin-bottom:22px;
+}
+.login{max-width:410px;margin:90px auto}
+.login h1{margin-top:0}
+.field{margin-bottom:17px}
+.field label{
+  display:block;font-size:12px;color:var(--muted);
+  margin-bottom:8px;
+}
+.field input,.field textarea,.field select{
+  width:100%;border:1px solid var(--line);
+  background:var(--bg);padding:13px;
+  outline:none;color:var(--ink);border-radius:0;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:#777;
+}
+.field textarea{resize:vertical;min-height:75px}
+.btn{
+  border:1px solid var(--ink);background:var(--ink);
+  color:white;padding:13px 18px;font-size:12px;
+  transition:.2s;
+}
+.btn:hover{opacity:.8}
+.btn.secondary{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.danger{background:transparent;color:#a33;border-color:#e5caca}
+.btn.full{width:100%}
+.topline{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:15px;margin-bottom:18px;
+}
+.topline h2{font-size:17px;font-weight:500;margin:0}
+.products{display:grid;gap:10px}
+.product{
+  display:flex;align-items:center;gap:15px;
+  padding:13px;border:1px solid var(--line);
+}
+.thumb{
+  width:64px;height:72px;flex-shrink:0;
+  background:var(--bg);display:flex;align-items:center;
+  justify-content:center;overflow:hidden;
+}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb span{font-size:9px;color:var(--muted)}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:13px;font-weight:500;margin-bottom:6px}
+.product-meta{font-size:11px;color:var(--muted)}
+.product-actions{display:flex;gap:7px;flex-wrap:wrap}
+.product-actions button{font-size:11px;padding:9px 11px}
+.status{font-size:10px;margin-top:6px;color:#777}
+.status.off{color:#a33}
+.form-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0 16px;
+}
+.full-field{grid-column:1/-1}
+.check{
+  display:flex;align-items:center;gap:9px;
+  font-size:12px;margin:5px 0 20px;
+}
+.check input{width:16px;height:16px}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap}
+#message{font-size:12px;color:var(--muted);margin-top:15px}
+.empty{font-size:13px;color:var(--muted);padding:25px 0}
+.hidden{display:none!important}
+@media(max-width:600px){
+  .wrap{padding:20px 15px 40px}
+  .panel{padding:17px}
+  .form-grid{grid-template-columns:1fr}
+  .full-field{grid-column:auto}
+  .product{align-items:flex-start;flex-wrap:wrap}
+  .product-actions{width:100%;padding-left:79px}
+  .topline{align-items:flex-start}
+  h1{font-size:23px}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo">blanks</div>
+  <div class="header-right">ADMIN PANEL</div>
+</header>
+
+<section id="loginPanel" class="panel login">
+  <h1>Вход</h1>
+  <p class="sub">Управление магазином blanks</p>
+
+  <form id="loginForm">
+    <div class="field">
+      <label>Email</label>
+      <input id="email" type="email" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Пароль</label>
+      <input id="password" type="password" required autocomplete="current-password">
+    </div>
+    <button class="btn full" type="submit">Войти</button>
+  </form>
+  <div id="loginMessage"></div>
+</section>
+
+<section id="dashboard" class="hidden">
+  <h1>Товары</h1>
+  <p class="sub">Управление каталогом магазина</p>
+
+  <div class="panel">
+    <div class="topline">
+      <h2>Каталог</h2>
+      <button class="btn" id="addButton">+ Добавить товар</button>
+    </div>
+    <div id="products" class="products"></div>
+  </div>
+
+  <div class="panel hidden" id="editor">
+    <div class="topline">
+      <h2 id="editorTitle">Новый товар</h2>
+      <button class="btn secondary" id="closeEditor">Закрыть</button>
+    </div>
+
+    <form id="productForm">
+      <div class="form-grid">
+
+        <div class="field full-field">
+          <label>Название товара</label>
+          <input id="pName" required maxlength="100" placeholder="Например, Essential Hoodie">
+        </div>
+
+        <div class="field">
+          <label>Цена (₴)</label>
+          <input id="pPrice" type="number" min="0" step="0.01" required>
+        </div>
+
+        <div class="field">
+          <label>Категория</label>
+          <select id="pCategory">
+            <option value="top">Верх</option>
+            <option value="bottom">Низ</option>
+          </select>
+        </div>
+
+        <div class="field full-field">
+          <label>Описание</label>
+          <textarea id="pDescription" placeholder="Описание товара"></textarea>
+        </div>
+
+        <div class="field full-field">
+          <label>Размеры через запятую</label>
+          <input id="pSizes" placeholder="XS, S, M, L, XL">
+        </div>
+
+        <div class="field full-field">
+          <label>Ссылки на фотографии (каждая с новой строки)</label>
+          <textarea id="pImages" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"></textarea>
+        </div>
+
+      </div>
+
+      <label class="check">
+        <input id="pActive" type="checkbox" checked>
+        Товар доступен в магазине
+      </label>
+
+      <div class="form-actions">
+        <button class="btn" type="submit" id="saveButton">Сохранить товар</button>
+        <button class="btn danger hidden" type="button" id="deleteButton">Удалить товар</button>
+      </div>
+      <div id="message"></div>
+    </form>
+  </div>
+
+  <button class="btn secondary" id="logoutButton">Выйти из аккаунта</button>
+</section>
+
+</div>
+
+<script>
+'use strict';
+
+const SUPABASE_URL = 'https://xoothvvwivglruepgbfu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_SWdFCnd42rfPARIod8Q_QA_WDuEmEwU';
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let editingId = null;
+let products = [];
+
+function showMessage(id, text, error = false){
+  const el = $(id);
+  el.textContent = text;
+  el.style.color = error ? '#a33' : '#777';
+}
+
+function escapeHTML(value){
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
+}
+
+function money(value){
+  return new Intl.NumberFormat('uk-UA').format(Number(value)) + ' ₴';
+}
+
+async function verifyAdmin(user){
+  const {data,error} = await db
+    .from('admin_users')
+    .select('user_id')
+    .eq('user_id',user.id)
+    .maybeSingle();
+
+  if(error) throw error;
+  return !!data;
+}
+
+async function enterDashboard(user){
+  const isAdmin = await verifyAdmin(user);
+
+  if(!isAdmin){
+    await db.auth.signOut();
+    throw new Error('У этого аккаунта нет прав администратора.');
+  }
+
+  currentUser = user;
+  $('loginPanel').classList.add('hidden');
+  $('dashboard').classList.remove('hidden');
+  await loadProducts();
+}
+
+async function loadProducts(){
+  $('products').innerHTML = '<div class="empty">Загрузка товаров...</div>';
+
+  const {data,error} = await db
+    .from('products')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    $('products').innerHTML = '<div class="empty">Ошибка загрузки: '+escapeHTML(error.message)+'</div>';
+    return;
+  }
+
+  products = data || [];
+  renderProducts();
+}
+
+function renderProducts(){
+  if(!products.length){
+    $('products').innerHTML = '<div class="empty">Пока нет товаров. Добавь первый товар.</div>';
+    return;
+  }
+
+  $('products').innerHTML = products.map(p => {
+    const image = Array.isArray(p.images) ? p.images[0] : '';
+    const safeImage = image ? escapeHTML(image) : '';
+
+    return `
+      <div class="product">
+        <div class="thumb">
+          ${safeImage
+            ? `<img src="${safeImage}" alt="" onerror="this.style.display='none'">`
+            : '<span>blanks</span>'}
+        </div>
+        <div class="product-info">
+          <div class="product-name">${escapeHTML(p.name)}</div>
+          <div class="product-meta">${money(p.price)} · ${escapeHTML(p.category || '—')}</div>
+          <div class="status ${p.is_active ? '' : 'off'}">
+            ${p.is_active ? 'Активен' : 'Скрыт'}
+          </div>
+        </div>
+        <div class="product-actions">
+          <button class="btn secondary" data-edit="${escapeHTML(p.id)}">Изменить</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openEditor(product = null){
+  editingId = product ? product.id : null;
+
+  $('editor').classList.remove('hidden');
+  $('editorTitle').textContent = product ? 'Редактирование товара' : 'Новый товар';
+  $('deleteButton').classList.toggle('hidden',!product);
+
+  $('pName').value = product?.name || '';
+  $('pPrice').value = product?.price ?? '';
+  $('pCategory').value = product?.category || 'top';
+  $('pDescription').value = product?.description || '';
+  $('pSizes').value = Array.isArray(product?.sizes) ? product.sizes.join(', ') : '';
+  $('pImages').value = Array.isArray(product?.images) ? product.images.join('\n') : '';
+  $('pActive').checked = product ? !!product.is_active : true;
+
+  showMessage('message','');
+  $('editor').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeEditor(){
+  $('editor').classList.add('hidden');
+  editingId = null;
+  $('productForm').reset();
+}
+
+$('loginForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+
+  const button = event.submitter;
+  button.disabled = true;
+  button.textContent = 'Входим...';
+  showMessage('loginMessage','');
+
+  try{
+    const {data,error} = await db.auth.signInWithPassword({
+      email:$('email').value.trim(),
+      password:$('password').value
+    });
+
+    if(error) throw error;
+
+    await enterDashboard(data.user);
+  }catch(error){
+    showMessage('loginMessage',error.message || 'Не удалось войти',true);
+  }finally{
+    button.disabled = false;
+    button.textContent = 'Войти';
+  }
+});
+
+$('addButton').addEventListener('click',()=>openEditor());
+$('closeEditor').addEventListener('click',closeEditor);
+
+$('products').addEventListener('click',event=>{
+  const button = event.target.closest('[data-edit]');
+  if(!button) return;
+
+  const product = products.find(p=>String(p.id)===button.dataset.edit);
+  if(product) openEditor(product);
+});
+
+$('productForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+
+  const button = $('saveButton');
+  button.disabled = true;
+  button.textContent = 'Сохраняем...';
+  showMessage('message','');
+
+  const sizes = $('pSizes').value
+    .split(',')
+    .map(s=>s.trim())
+    .filter(Boolean);
+
+  const images = $('pImages').value
+    .split('\n')
+    .map(s=>s.trim())
+    .filter(Boolean);
+
+  const payload = {
+    name:$('pName').value.trim(),
+    price:Number($('pPrice').value),
+    category:$('pCategory').value,
+    description:$('pDescription').value.trim(),
+    sizes,
+    images,
+    is_active:$('pActive').checked
+  };
+
+  try{
+    let result;
+
+    if(editingId){
+      result = await db
+        .from('products')
+        .update(payload)
+        .eq('id',editingId);
+    }else{
+      result = await db
+        .from('products')
+        .insert(payload);
+    }
+
+    if(result.error) throw result.error;
+
+    showMessage('message','Товар успешно сохранён.');
+    await loadProducts();
+
+    setTimeout(closeEditor,700);
+
+  }catch(error){
+    showMessage('message',error.message || 'Ошибка сохранения',true);
+  }finally{
+    button.disabled = false;
+    button.textContent = 'Сохранить товар';
+  }
+});
+
+$('deleteButton').addEventListener('click',async()=>{
+  if(!editingId) return;
+  if(!confirm('Точно удалить этот товар?')) return;
+
+  const button = $('deleteButton');
+  button.disabled = true;
+
+  try{
+    const {error} = await db
+      .from('products')
+      .delete()
+      .eq('id',editingId);
+
+    if(error) throw error;
+
+    closeEditor();
+    await loadProducts();
+  }catch(error){
+    showMessage('message',error.message || 'Ошибка удаления',true);
+  }finally{
+    button.disabled = false;
+  }
+});
+
+$('logoutButton').addEventListener('click',async()=>{
+  await db.auth.signOut();
+  currentUser = null;
+  products = [];
+  $('dashboard').classList.add('hidden');
+  $('loginPanel').classList.remove('hidden');
+  $('password').value = '';
+});
+
+async function init(){
+  const {data,error} = await db.auth.getSession();
+
+  if(error){
+    showMessage('loginMessage',error.message,true);
+    return;
+  }
+
+  if(data.session?.user){
+    try{
+      await enterDashboard(data.session.user);
+    }catch(error){
+      showMessage('loginMessage',error.message || 'Нет доступа',true);
+      $('loginPanel').classList.remove('hidden');
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
