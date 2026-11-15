@@ -485,6 +485,13 @@ if (tg) {
   tg.ready();
   tg.expand();
 
+  if (tg.requestFullscreen) {
+    tg.requestFullscreen();
+  }
+
+  if (tg.disableVerticalSwipes) {
+    tg.disableVerticalSwipes();
+  }
   const updateAppHeight = () => {
   const height = tg.viewportHeight;
 
